@@ -12,3 +12,9 @@ variable "subnet_cidr" {
   description = "IPV4 CIDR for the subnet"
   type        = string
 }
+
+variable "welcome_message" {
+  description = "Message displayed on the web page"
+  type        = string
+  default     = "Hello from Terraform!"
+}

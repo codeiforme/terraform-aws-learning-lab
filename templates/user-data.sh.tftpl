@@ -1,0 +1,19 @@
+  #!/bin/bash
+  set -eu
+
+  dnf install -y httpd
+
+  cat > /var/www/html/index.html <<'HTML'
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>${project_name}</title>
+  </head>
+  <body>
+    <h1>${welcome_message}</h1>
+  </body>
+  </html>
+  HTML
+
+  systemctl enable --now httpd

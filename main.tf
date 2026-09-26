@@ -1,7 +1,7 @@
 resource "aws_vpc" "lab" {
   cidr_block = var.vpc_cidr
   tags = {
-    Name = "terraform-aws-learning-lab"
+    Name = "${local.project_name}-lab"
   }
 }
 
@@ -10,7 +10,7 @@ resource "aws_subnet" "lab" {
   cidr_block = var.subnet_cidr
 
   tags = {
-    Name = "terraform-aws-learning-lab-subnet"
+    Name = "${local.project_name}-subnet"
   }
 }
 
@@ -18,7 +18,7 @@ resource "aws_internet_gateway" "lab" {
   vpc_id = aws_vpc.lab.id
 
   tags = {
-    Name = "terraform-aws-learning-lab-igw"
+    Name = "${local.project_name}-igw"
   }
 }
 
@@ -31,7 +31,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "terraform-aws-learning-lab-public"
+    Name = "${local.project_name}-public"
   }
 }
 

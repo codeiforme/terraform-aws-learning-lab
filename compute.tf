@@ -12,13 +12,12 @@ resource "aws_instance" "web" {
 
   user_data_replace_on_change = true
 
-  user_data = <<-EOF
-      #!/bin/bash
-      set -eu
-      dnf install -y httpd
-      echo '<h1>This is a test to create a webserver with terraform</h1>' > /var/www/html/index.html
-      systemctl enable --now httpd
-    EOF
+  user_data = templatefile("${path.module}/templates/user-data.sh.tftpl", {
+    project_name    = local.project_name
+    welcome_message = var.welcome_message
+  })
+
+
 
   depends_on = [
     aws_route_table_association.lab,
@@ -26,7 +25,7 @@ resource "aws_instance" "web" {
   ]
 
   tags = {
-    Name = "terrafrom-lab-web"
+    Name = "${local.project_name}-web"
   }
 
 }

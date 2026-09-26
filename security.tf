@@ -3,7 +3,7 @@ resource "aws_security_group" "web" {
   description = "Security group"
   vpc_id      = aws_vpc.lab.id
   tags = {
-    Name = "terraform-lab-web"
+    Name = "${local.project_name}-web"
   }
 
 }
@@ -16,6 +16,7 @@ resource "aws_vpc_security_group_ingress_rule" "http" {
   ip_protocol = "tcp"
   from_port   = 80
   to_port     = 80
+
 }
 
 resource "aws_vpc_security_group_egress_rule" "all_ipv4" {
