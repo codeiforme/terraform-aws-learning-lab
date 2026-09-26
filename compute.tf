@@ -7,7 +7,7 @@ resource "aws_instance" "web" {
   instance_type = "t3.micro"
 
   subnet_id                   = aws_subnet.lab.id
-  vpc_security_group_ids      = [aws_security_group.web.id]
+  vpc_security_group_ids      = [module.web_security.security_group_id]
   associate_public_ip_address = true
 
   user_data_replace_on_change = true
@@ -21,7 +21,7 @@ resource "aws_instance" "web" {
 
   depends_on = [
     aws_route_table_association.lab,
-    aws_vpc_security_group_egress_rule.all_ipv4
+    module.web_security,
   ]
 
   tags = {
