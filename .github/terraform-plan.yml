@@ -1,0 +1,55 @@
+name: Terraform plan
+
+ on:
+   push:
+     branches: [main]
+   workflow_dispatch:
+
+ concurrency:
+   group: terraform-lab-plan
+     cancel-in-progress: false
+
+ jobs:
+   plan:
+     name: Plan lab infrastructure
+     if: github.ref == 'refs/heads/main'
+     runs-on: ubuntu-latest
+     timeout-minutes: 10
+
+     permissions:
+       contents: read
+       id-token: write
+
+     env:
+       TF_IN_AUTOMATION: "true"
+       TF_VAR_aws_region: "eu-north-1"
+       TF_VAR_vpc_cidr: "10.0.0.0/16"
+       TF_VAR_subnet_cidr: "10.0.1.0/24"
+       TF_VAR_welcome_message: "My infrastructure is managed with Terraform."
+
+     steps:
+       - name: Checkout repository
+         uses: actions/checkout@v6
+
+       - name: Install Terraform
+         uses: hashicorp/setup-terraform@v4
+         with:
+           terraform_version: "1.14.6"
+           terraform_wrapper: false
+
+       - name: Authenticate to AWS
+         uses: aws-actions/configure-aws-credentials@v6.3.0
+         with:
+           role-to-assume: arn:aws:iam::602689947009:role/terraform-lab-github-plan
+           aws-region: eu-north-1
+           role-session-name: terraform-plan-${{ github.run_id }}
+           role-duration-seconds: 900
+
+       - name: Initialize Terraform
+         run: terraform init -backend-config=backend.hcl -input=false -lockfile=readonly
+
+       - name: Validate configuration
+         run: terraform validate -no-color
+
+       - name: Plan infrastructure
+         run: terraform plan -input=false -no-color -lock-timeout=60s
