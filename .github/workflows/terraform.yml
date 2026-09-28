@@ -1,0 +1,39 @@
+  name: Terraform checks
+
+  on:
+    push:
+    pull_request:
+
+  permissions:
+    contents: read
+
+  jobs:
+    validate:
+      name: Format and validate
+      runs-on: ubuntu-latest
+
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v6
+
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v4
+          with:
+            terraform_version: "1.14.6"
+            terraform_wrapper: false
+
+        - name: Check formatting
+          run: terraform fmt -check -recursive
+
+        - name: Initialize lab
+          run: terraform init -backend=false -input=false -lockfile=readonly
+
+        - name: Validate lab
+          run: terraform validate -no-color
+
+        - name: Initialize bootstrap
+          run: terraform -chdir=bootstrap init -backend=false -input=false
+          -lockfile=readonly
+
+        - name: Validate bootstrap
+          run: terraform -chdir=bootstrap validate -no-color
