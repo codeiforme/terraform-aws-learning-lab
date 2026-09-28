@@ -32,8 +32,7 @@
           run: terraform validate -no-color
 
         - name: Initialize bootstrap
-          run: terraform -chdir=bootstrap init -backend=false -input=false
-          -lockfile=readonly
+          run: terraform -chdir=bootstrap init -backend=false -input=false -lockfile=readonly
 
         - name: Validate bootstrap
           run: terraform -chdir=bootstrap validate -no-color
